@@ -1,0 +1,52 @@
+# ── Dependencies ──
+node_modules/
+
+# ── Build output ──
+dist/
+dist-ssr/
+build/
+.output/
+
+# ── Env files ──
+.env
+.env.*
+!.env.example
+
+# ── Logs ──
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Testing ──
+coverage/
+.nyc_output/
+
+# ── Prisma generated ──
+generated/
+
+# ── Runtime ──
+pids/
+*.pid
+*.seed
+*.pid.lock
+.temp/
+.tmp/
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+
+# ── IDE ──
+.idea/
+*.sublime-workspace
+*.suo
+*.sw?
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
