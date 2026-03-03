@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>МойПроект — клиентский портал для IT-агентств</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600&family=Golos+Text:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #0a0a0a;
+  --white: #fafaf8;
+  --gray: #8a8a82;
+  --light: #f0efe9;
+  --accent: #2563ff;
+  --accent-soft: #eef2ff;
+  --border: #e4e3dc;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Golos Text', sans-serif;
+  background: var(--white);
+  color: var(--black);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SCROLL ANIMATIONS ── */
+[data-anim] {
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1);
+}
+[data-anim="up"]    { transform: translateY(36px); }
+[data-anim="left"]  { transform: translateX(-36px); }
+[data-anim="right"] { transform: translateX(36px); }
+[data-anim="scale"] { transform: scale(0.93); }
+[data-anim="fade"]  { transform: none; }
+[data-anim].visible { opacity: 1 !important; transform: none !important; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 18px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(250,250,248,0.88);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, padding 0.3s;
+}
+nav.scrolled { border-color: var(--border); padding: 13px 48px; }
+
+.logo {
+  font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 600;
+  letter-spacing: -0.02em; color: var(--black); text-decoration: none; flex-shrink: 0;
+}
+.logo span { color: var(--accent); }
+
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links a { font-size: 14px; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--black); }
+
+.nav-right { display: flex; align-items: center; gap: 10px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 8px;
+  font-family: 'Golos Text', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; text-decoration: none; border: none; white-space: nowrap;
+}
+.btn-primary { background: var(--black); color: var(--white); }
+.btn-primary:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.btn-outline { background: transparent; color: var(--black); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--black); background: var(--light); }
+.btn-white { background: var(--white); color: var(--black); }
+.btn-white:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-lg { padding: 14px 32px; font-size: 15px; border-radius: 10px; }
+
+/* burger */
+.burger {
+  display: none; flex-direction: column; gap: 5px;
+  cursor: pointer; padding: 4px; background: none; border: none;
+}
+.burger span { display: block; width: 22px; height: 2px; background: var(--black); border-radius: 2px; transition: all 0.3s; }
+.burger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+.burger.open span:nth-child(2) { opacity: 0; }
+.burger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+.mobile-menu {
+  display: none; position: fixed; inset: 0; top: 56px; z-index: 190;
+  background: var(--white); padding: 28px 24px;
+  flex-direction: column; gap: 4px; border-top: 1px solid var(--border);
+  overflow-y: auto;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a.mob-link {
+  font-size: 18px; font-weight: 500; color: var(--black); text-decoration: none;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.mobile-menu .btn { margin-top: 12px; justify-content: center; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 64px; position: relative; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%, rgba(37,99,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 85%, rgba(37,99,255,0.05) 0%, transparent 60%);
+}
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; background: var(--accent-soft); border: 1px solid rgba(37,99,255,0.18);
+  border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--accent);
+  margin-bottom: 28px; animation: hfade 0.6s 0.1s both;
+}
+.pill-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+.hero h1 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(30px, 6vw, 72px); font-weight: 300; line-height: 1.1; letter-spacing: -0.03em;
+  max-width: 800px; margin-bottom: 20px; animation: hfade 0.7s 0.2s both;
+}
+.hero h1 strong { font-weight: 600; color: var(--accent); }
+
+.hero-sub {
+  font-size: clamp(15px, 2vw, 18px); color: var(--gray); max-width: 480px;
+  margin-bottom: 36px; animation: hfade 0.7s 0.3s both;
+}
+.hero-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; animation: hfade 0.7s 0.4s both; }
+.hero-note { margin-top: 14px; font-size: 12px; color: var(--gray); animation: hfade 0.7s 0.5s both; }
+
+@keyframes hfade { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+
+/* mockup */
+.mockup-wrap { margin-top: 60px; width: 100%; max-width: 880px; position: relative; animation: hfade 0.9s 0.55s both; }
+.mockup-glow {
+  position: absolute; bottom: -32px; left: 8%; right: 8%; height: 60px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.12) 0%, transparent 70%);
+  filter: blur(18px); pointer-events: none;
+}
+.mockup {
+  background: var(--white); border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.04);
+}
+.mock-bar {
+  background: var(--light); padding: 10px 16px;
+  display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border);
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dr{background:#ff5f57} .dy{background:#febc2e} .dg{background:#28c840}
+.mock-url {
+  flex: 1; text-align: center; font-size: 12px; color: var(--gray);
+  background: var(--white); padding: 3px 12px; border-radius: 5px;
+  border: 1px solid var(--border); max-width: 260px; margin: 0 auto;
+}
+.mock-body { display: grid; grid-template-columns: 200px 1fr; min-height: 320px; }
+.mock-side { background: var(--light); border-right: 1px solid var(--border); padding: 18px 14px; }
+.mock-brand { font-family: 'Unbounded', sans-serif; font-size: 10px; font-weight: 600; color: var(--black); margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.s-item { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 7px; font-size: 12px; color: var(--gray); margin-bottom: 3px; }
+.s-item.on { background: var(--white); color: var(--black); font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.s-ico { width: 14px; height: 14px; border-radius: 3px; background: var(--border); flex-shrink: 0; }
+.s-item.on .s-ico { background: var(--accent); }
+.mock-main { padding: 22px 24px; }
+.mock-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.mock-t { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 600; }
+.mock-add { background: var(--black); color: var(--white); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+.pcard { border: 1px solid var(--border); border-radius: 9px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+.pcolor { width: 32px; height: 32px; border-radius: 7px; flex-shrink: 0; }
+.pinfo { flex: 1; min-width: 0; }
+.pname { font-size: 12px; font-weight: 500; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pclient { font-size: 11px; color: var(--gray); }
+.pstatus { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 100px; white-space: nowrap; }
+.sa{background:#e8f5e9;color:#2e7d32} .sr{background:#fff8e1;color:#f57f17} .sd{background:var(--light);color:var(--gray)}
+
+/* ── SECTIONS ── */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 48px; }
+section { padding: 96px 0; }
+
+.label {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.label::before { content: ''; width: 18px; height: 1px; background: var(--accent); }
+
+.sec-h {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(24px, 4vw, 44px); font-weight: 300; line-height: 1.12;
+  letter-spacing: -0.025em; max-width: 560px; margin-bottom: 14px;
+}
+.sec-h strong { font-weight: 600; }
+.sec-sub { font-size: 17px; color: var(--gray); max-width: 460px; margin-bottom: 52px; }
+
+/* problem */
+.prob-bg { background: var(--black); }
+.prob-bg .label { color: #7c8aff; }
+.prob-bg .label::before { background: #7c8aff; }
+.prob-bg .sec-h { color: var(--white); max-width: 640px; }
+.prob-bg .sec-sub { color: #555; }
+
+.prob-grid {
+  display: grid; grid-template-columns: repeat(2,1fr);
+  border: 1px solid #1e1e1e; border-radius: 16px; overflow: hidden;
+}
+.prob-item {
+  padding: 36px 32px; background: var(--black);
+  border-right: 1px solid #1e1e1e; border-bottom: 1px solid #1e1e1e;
+  transition: background 0.25s;
+}
+.prob-item:hover { background: #0f0f0f; }
+.prob-item:nth-child(2n) { border-right: none; }
+.prob-item:nth-last-child(-n+2) { border-bottom: none; }
+.prob-n { font-family: 'Unbounded', sans-serif; font-size: 11px; color: #333; margin-bottom: 14px; }
+.prob-item h3 { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 400; color: var(--white); margin-bottom: 10px; line-height: 1.4; }
+.prob-item p { font-size: 14px; color: #555; line-height: 1.65; }
+
+/* how */
+.steps-row { display: grid; grid-template-columns: repeat(4,1fr); position: relative; gap: 8px; }
+.steps-row::before {
+  content: ''; position: absolute; top: 21px;
+  left: calc(12.5% + 10px); right: calc(12.5% + 10px);
+  height: 1px; background: var(--border); pointer-events: none;
+}
+.step-item { padding-right: 16px; }
+.step-num {
+  width: 42px; height: 42px; border-radius: 50%; background: var(--white);
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-family: 'Unbounded', sans-serif; font-size: 13px;
+  margin-bottom: 20px; position: relative; z-index: 1; transition: all 0.3s;
+}
+.step-item:first-child .step-num { background: var(--accent); color: var(--white); border-color: var(--accent); }
+.step-item:hover .step-num { background: var(--accent); color: var(--white); border-color: var(--accent); }
+.step-item h3 { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 500; margin-bottom: 8px; line-height: 1.4; }
+.step-item p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+/* features */
+.feat-bg { background: var(--light); }
+.feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.feat-card {
+  padding: 28px; background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; transition: all 0.25s;
+}
+.feat-card:hover { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); transform: translateY(-2px); }
+.feat-icon { width: 38px; height: 38px; background: var(--accent-soft); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 16px; }
+.feat-card h3 { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 500; margin-bottom: 8px; line-height: 1.4; }
+.feat-card p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+/* pricing */
+.price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; align-items: start; }
+.price-card {
+  background: var(--white); border: 1px solid var(--border); border-radius: 18px;
+  padding: 34px 28px; position: relative; transition: all 0.25s;
+}
+.price-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.07); }
+.price-card.hot { background: var(--black); color: var(--white); border-color: var(--black); }
+.hot-badge {
+  position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: var(--white); font-size: 10px; font-weight: 600;
+  padding: 3px 14px; border-radius: 100px; white-space: nowrap;
+}
+.price-plan { font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray); margin-bottom: 16px; }
+.price-card.hot .price-plan { color: #555; }
+.price-val { font-family: 'Unbounded', sans-serif; font-size: 40px; font-weight: 300; letter-spacing: -0.03em; margin-bottom: 4px; line-height: 1; }
+.price-per { font-size: 13px; color: var(--gray); margin-bottom: 22px; }
+.price-card.hot .price-per { color: #555; }
+.price-div { height: 1px; background: var(--border); margin-bottom: 20px; }
+.price-card.hot .price-div { background: #1e1e1e; }
+.price-list { list-style: none; margin-bottom: 26px; }
+.price-list li { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--gray); padding: 7px 0; border-bottom: 1px solid var(--border); }
+.price-card.hot .price-list li { color: #666; border-color: #1e1e1e; }
+.price-list li::before { content: '✓'; color: var(--accent); font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+/* cta */
+.cta-wrap { background: var(--black); padding: 100px 24px; }
+.cta-box { max-width: 600px; margin: 0 auto; text-align: center; }
+.cta-box .label { color: #7c8aff; justify-content: center; }
+.cta-box .label::before { background: #7c8aff; }
+.cta-h { font-family: 'Unbounded', sans-serif; font-size: clamp(26px, 4vw, 48px); font-weight: 300; letter-spacing: -0.025em; color: var(--white); line-height: 1.1; margin-bottom: 16px; }
+.cta-h strong { font-weight: 600; }
+.cta-sub { font-size: 16px; color: #555; margin-bottom: 36px; }
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cta-note { margin-top: 14px; font-size: 12px; color: #333; }
+
+/* footer */
+footer {
+  padding: 36px 48px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.foot-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
+.foot-links a { font-size: 13px; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+.foot-links a:hover { color: var(--black); }
+.foot-copy { font-size: 13px; color: var(--gray); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  nav { padding: 15px 24px; }
+  nav.scrolled { padding: 12px 24px; }
+  .nav-links, .nav-right .btn-outline { display: none; }
+  .burger { display: flex; }
+  .wrap { padding: 0 20px; }
+  section { padding: 64px 0; }
+
+  .mock-body { grid-template-columns: 1fr; }
+  .mock-side { display: none; }
+
+  .prob-grid { grid-template-columns: 1fr; }
+  .prob-item:nth-child(2n) { border-right: none; }
+  .prob-item:nth-last-child(-n+2) { border-bottom: 1px solid #1e1e1e; }
+  .prob-item:last-child { border-bottom: none; }
+
+  .steps-row { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .steps-row::before { display: none; }
+
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+  .price-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+
+  footer { padding: 28px 20px; flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 560px) {
+  .hero { padding: 100px 20px 48px; }
+  .hero h1 { font-size: clamp(26px, 9vw, 40px); }
+  .hero-cta { flex-direction: column; width: 100%; }
+  .hero-cta .btn { width: 100%; justify-content: center; }
+
+  .steps-row { grid-template-columns: 1fr; gap: 28px; }
+  .feat-grid { grid-template-columns: 1fr; }
+
+  .cta-btns { flex-direction: column; }
+  .cta-btns .btn { width: 100%; justify-content: center; }
+
+  .foot-links { gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#" class="logo">Мой<span>Проект</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">Как работает</a></li>
+    <li><a href="#features">Возможности</a></li>
+    <li><a href="#pricing">Тарифы</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="btn btn-outline">Войти</a>
+    <a href="#" class="btn btn-primary">Попробовать</a>
+    <button class="burger" id="burger" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#how" class="mob-link">Как работает</a>
+  <a href="#features" class="mob-link">Возможности</a>
+  <a href="#pricing" class="mob-link">Тарифы</a>
+  <a href="#" class="btn btn-outline">Войти</a>
+  <a href="#" class="btn btn-primary">Попробовать бесплатно →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-pill"><div class="pill-dot"></div>Для IT-агентств и веб-студий</div>
+  <h1>Клиенты видят<br><strong>всё сами.</strong><br>Вы работаете.</h1>
+  <p class="hero-sub">Белый клиентский портал под вашим брендом. Статус, правки, документы и оплата — в одном месте.</p>
+  <div class="hero-cta">
+    <a href="#" class="btn btn-primary btn-lg">Начать бесплатно →</a>
+    <a href="#how" class="btn btn-outline btn-lg">Как это работает</a>
+  </div>
+  <p class="hero-note">14 дней бесплатно · Без привязки карты · Отмена в любой момент</p>
+
+  <div class="mockup-wrap">
+    <div class="mockup-glow"></div>
+    <div class="mockup">
+      <div class="mock-bar">
+        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+        <div class="mock-url">portal.вашеагентство.ru</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-side">
+          <div class="mock-brand">ВашеАгентство</div>
+          <div class="s-item on"><div class="s-ico"></div>Проекты</div>
+          <div class="s-item"><div class="s-ico"></div>Клиенты</div>
+          <div class="s-item"><div class="s-ico"></div>Документы</div>
+          <div class="s-item"><div class="s-ico"></div>Настройки</div>
+        </div>
+        <div class="mock-main">
+          <div class="mock-h">
+            <div class="mock-t">Активные проекты</div>
+            <div class="mock-add">+ Новый</div>
+          </div>
+          <div class="pcard">
+            <div class="pcolor" style="background:linear-gradient(135deg,#667eea,#764ba2)"></div>
+            <div class="pinfo"><div class="pname">Корпоративный сайт</div><div class="pclient">ООО «Альфа Групп» · Разработка</div></div>
+            <div class="pstatus sa">В работе</div>
+          </div>
+          <div class="pcard">
+            <div class="pcolor" style="background:linear-gradient(135deg,#f093fb,#f5576c)"></div>
+            <div class="pinfo"><div class="pname">Редизайн магазина</div><div class="pclient">ИП Смирнов А.В. · Дизайн</div></div>
+            <div class="pstatus sr">На согласовании</div>
+          </div>
+          <div class="pcard">
+            <div class="pcolor" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"></div>
+            <div class="pinfo"><div class="pname">Мобильное приложение</div><div class="pclient">ООО «Технологии» · Финал</div></div>
+            <div class="pstatus sd">Завершён</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="prob-bg">
+  <div class="wrap">
+    <div class="label" data-anim="up">Знакомо?</div>
+    <h2 class="sec-h" data-anim="up" data-delay="80">Пока вы делаете —<br><strong>клиент беспокоится</strong></h2>
+    <p class="sec-sub" data-anim="up" data-delay="140">Без прозрачности клиент чувствует потерю контроля. И начинает звонить.</p>
+    <div class="prob-grid">
+      <div class="prob-item" data-anim="up" data-delay="0"><div class="prob-n">01</div><h3>«Ну что там по проекту?»</h3><p>Менеджер тратит час в день на обновление статусов вместо реальной работы</p></div>
+      <div class="prob-item" data-anim="up" data-delay="80"><div class="prob-n">02</div><h3>Правки везде и нигде</h3><p>В Telegram, в почте, голосом. Потом — «я такого не говорил»</p></div>
+      <div class="prob-item" data-anim="up" data-delay="160"><div class="prob-n">03</div><h3>Акты через сканы</h3><p>Распечатать → подписать → сфотографировать → отправить. В 2025 году.</p></div>
+      <div class="prob-item" data-anim="up" data-delay="240"><div class="prob-n">04</div><h3>Клиент не понимает за что платит</h3><p>Нет прогресса — нет доверия. Без доверия нет повторных заказов.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="label" data-anim="up">Как работает</div>
+    <h2 class="sec-h" data-anim="up" data-delay="80">От регистрации до<br><strong>первого клиента</strong> — 15 минут</h2>
+    <div class="steps-row">
+      <div class="step-item" data-anim="up" data-delay="0">
+        <div class="step-num">01</div>
+        <h3>Настройте бренд</h3>
+        <p>Логотип, цвет, домен. Клиент думает что это ваша собственная разработка.</p>
+      </div>
+      <div class="step-item" data-anim="up" data-delay="100">
+        <div class="step-num">02</div>
+        <h3>Создайте проект</h3>
+        <p>Добавьте этапы и файлы. Бриф → дизайн → разработка → сдача.</p>
+      </div>
+      <div class="step-item" data-anim="up" data-delay="200">
+        <div class="step-num">03</div>
+        <h3>Пригласите клиента</h3>
+        <p>Один клик — клиент видит проект. Без регистрации, сразу понятно.</p>
+      </div>
+      <div class="step-item" data-anim="up" data-delay="300">
+        <div class="step-num">04</div>
+        <h3>Получите деньги</h3>
+        <p>Выставите счёт прямо в портале. Клиент платит картой — деньги идут вам.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="feat-bg">
+  <div class="wrap">
+    <div class="label" data-anim="up">Возможности</div>
+    <h2 class="sec-h" data-anim="up" data-delay="80">Всё нужное.<br><strong>Ничего лишнего.</strong></h2>
+    <div class="feat-grid">
+      <div class="feat-card" data-anim="up" data-delay="0"><div class="feat-icon">🏷️</div><h3>White-label портал</h3><p>Ваш логотип, домен, цвета. Клиент не знает что это МойПроект.</p></div>
+      <div class="feat-card" data-anim="up" data-delay="80"><div class="feat-icon">📊</div><h3>Статус в реальном времени</h3><p>Клиент видит этапы и прогресс. Без звонков «ну что там».</p></div>
+      <div class="feat-card" data-anim="up" data-delay="160"><div class="feat-icon">💬</div><h3>Правки с историей</h3><p>Комментарии привязаны к этапу. Кто, что, когда — зафиксировано навсегда.</p></div>
+      <div class="feat-card" data-anim="up" data-delay="0"><div class="feat-icon">📋</div><h3>Документы онлайн</h3><p>Акты и счета — клиент скачивает и подписывает без сканов и почты.</p></div>
+      <div class="feat-card" data-anim="up" data-delay="80"><div class="feat-icon">💳</div><h3>Оплата через ЮKassa</h3><p>Клиент платит картой или по реквизитам. Деньги идут напрямую вам.</p></div>
+      <div class="feat-card" data-anim="up" data-delay="160"><div class="feat-icon">🔔</div><h3>Уведомления в Telegram</h3><p>Новая правка, смена статуса, оплата — узнаёте мгновенно.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="label" data-anim="up">Тарифы</div>
+    <h2 class="sec-h" data-anim="up" data-delay="80">Просто и <strong>честно</strong></h2>
+    <p class="sec-sub" data-anim="up" data-delay="140">Платите за компанию, а не за каждого пользователя.</p>
+    <div class="price-grid">
+      <div class="price-card" data-anim="up" data-delay="0">
+        <div class="price-plan">Старт</div>
+        <div class="price-val">1 990 ₽</div>
+        <div class="price-per">в месяц</div>
+        <div class="price-div"></div>
+        <ul class="price-list">
+          <li>До 5 активных проектов</li>
+          <li>Неограниченно клиентов</li>
+          <li>Клиентский портал</li>
+          <li>Комментарии и файлы</li>
+          <li>Telegram-уведомления</li>
+        </ul>
+        <a href="#" class="btn btn-outline" style="width:100%;justify-content:center">Начать бесплатно</a>
+      </div>
+      <div class="price-card hot" data-anim="scale" data-delay="100">
+        <div class="hot-badge">Популярный</div>
+        <div class="price-plan">Агентство</div>
+        <div class="price-val">4 990 ₽</div>
+        <div class="price-per">в месяц</div>
+        <div class="price-div"></div>
+        <ul class="price-list">
+          <li>До 20 активных проектов</li>
+          <li>Неограниченно клиентов</li>
+          <li>Кастомный домен</li>
+          <li>Онлайн-оплата (ЮKassa)</li>
+          <li>Документы и акты</li>
+          <li>Приоритетная поддержка</li>
+        </ul>
+        <a href="#" class="btn btn-white" style="width:100%;justify-content:center">Начать бесплатно</a>
+      </div>
+      <div class="price-card" data-anim="up" data-delay="200">
+        <div class="price-plan">Команда</div>
+        <div class="price-val">9 990 ₽</div>
+        <div class="price-per">в месяц</div>
+        <div class="price-div"></div>
+        <ul class="price-list">
+          <li>Безлимит проектов</li>
+          <li>Несколько брендов</li>
+          <li>API доступ</li>
+          <li>Выделенный менеджер</li>
+          <li>SLA 99.9%</li>
+        </ul>
+        <a href="#" class="btn btn-outline" style="width:100%;justify-content:center">Начать бесплатно</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-wrap">
+  <div class="cta-box">
+    <div class="label" data-anim="up">Готовы начать?</div>
+    <h2 class="cta-h" data-anim="up" data-delay="80">Ваши клиенты заслуживают <strong>лучшего опыта</strong></h2>
+    <p class="cta-sub" data-anim="up" data-delay="140">Настройте портал за 10 минут. Первые 14 дней бесплатно.</p>
+    <div class="cta-btns" data-anim="up" data-delay="200">
+      <a href="#" class="btn btn-white btn-lg">Попробовать бесплатно →</a>
+      <a href="#" class="btn btn-lg" style="background:transparent;color:#444;border:1px solid #222">Задать вопрос</a>
+    </div>
+    <p class="cta-note" data-anim="fade" data-delay="260">Без карты · Без обязательств · Отмена в 1 клик</p>
+  </div>
+</div>
+
+<footer>
+  <a href="#" class="logo">Мой<span>Проект</span></a>
+  <ul class="foot-links">
+    <li><a href="#">Возможности</a></li>
+    <li><a href="#">Тарифы</a></li>
+    <li><a href="#">Поддержка</a></li>
+    <li><a href="#">Политика конфиденциальности</a></li>
+  </ul>
+  <p class="foot-copy">© 2025 МойПроект</p>
+</footer>
+
+<script>
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 24);
+}, { passive: true });
+
+// Burger menu
+const burger = document.getElementById('burger');
+const menu = document.getElementById('mobileMenu');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  menu.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+});
+document.querySelectorAll('.mob-link').forEach(l => {
+  l.addEventListener('click', () => {
+    burger.classList.remove('open');
+    menu.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// Scroll animations
+const els = document.querySelectorAll('[data-anim]');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const delay = parseInt(e.target.dataset.delay || 0);
+    setTimeout(() => e.target.classList.add('visible'), delay);
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+els.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
