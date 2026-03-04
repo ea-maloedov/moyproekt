@@ -2,7 +2,7 @@ name: Deploy NestJS API
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'api/**' # Срабатывает только при изменениях в бэкенде
 
