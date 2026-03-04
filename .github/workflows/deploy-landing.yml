@@ -36,16 +36,18 @@ jobs:
 
       - name: Upload assets (long cache)
         run: |
-          aws s3 sync landing "s3://${S3_BUCKET}/" \
+          aws s3 sync landing/ "s3://${S3_BUCKET}/" \
             --endpoint-url "${S3_ENDPOINT}" \
+            --region "${AWS_DEFAULT_REGION}" \
             --delete \
             --exclude "*.html" \
-            --cache-control "public, max-age=86400"
+            --cache-control "public, max-age=31536000" # Обычно для ассетов ставят год
 
       - name: Upload html (short cache)
         run: |
-          aws s3 sync landing "s3://${S3_BUCKET}/" \
+          aws s3 sync landing/ "s3://${S3_BUCKET}/" \
             --endpoint-url "${S3_ENDPOINT}" \
+            --region "${AWS_DEFAULT_REGION}" \
             --exclude "*" \
             --include "*.html" \
-            --cache-control "public, max-age=60"
+            --cache-control "no-cache, no-store, must-revalidate" # Лучше запретить кеш для HTML вовсе
