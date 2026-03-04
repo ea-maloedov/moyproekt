@@ -2,7 +2,7 @@ name: Deploy Landing to Yandex Object Storage
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - "landing/**"
       - ".github/workflows/deploy-landing.yml"
