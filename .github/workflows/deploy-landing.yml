@@ -2,7 +2,7 @@ name: Deploy Landing to Yandex Object Storage
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["main"]
     paths:
       - "landing/**"
       - ".github/workflows/deploy-landing.yml"
@@ -28,26 +28,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install awscli
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
+      - name: Install AWS CLI
+        uses: aws-actions/setup-aws-cli@v2
 
       - name: Verify landing folder exists
-        run: |
-          test -f landing/index.html
+        run: test -f landing/index.html
 
-      # 1) Сначала ассеты (кроме html) — можно кешировать надолго
       - name: Upload assets (long cache)
         run: |
           aws s3 sync landing "s3://${S3_BUCKET}/" \
             --endpoint-url "${S3_ENDPOINT}" \
             --delete \
             --exclude "*.html" \
-            --cache-control "public, max-age=31536000, immutable"
+            --cache-control "public, max-age=86400"
 
-      # 2) Потом HTML — почти без кеша, чтобы изменения появлялись быстро
-      - name: Upload html (no/short cache)
+      - name: Upload html (short cache)
         run: |
           aws s3 sync landing "s3://${S3_BUCKET}/" \
             --endpoint-url "${S3_ENDPOINT}" \
