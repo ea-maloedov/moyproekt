@@ -14,7 +14,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 
 # NestJS по умолчанию слушает 3000, Yandex Serverless передает PORT через переменную
-ENV PORT=3000
-EXPOSE 3000
+ENV PORT=8080
+EXPOSE 8080
 
 CMD ["node", "dist/main"]
