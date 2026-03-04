@@ -28,8 +28,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install AWS CLI
-        uses: aws-actions/setup-aws-cli@v2
+      - name: Check AWS CLI
+        run: aws --version
 
       - name: Verify landing folder exists
         run: test -f landing/index.html
