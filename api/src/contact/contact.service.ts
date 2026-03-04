@@ -147,31 +147,19 @@ export class ContactService {
 </body>
 </html>`;
 
-    const [adminResult, clientResult] = await Promise.allSettled([
-      // Уведомление себе
-      this.transporter.sendMail({
-        from: `"МойПроект" <${process.env.SMTP_USER}>`,
-        to: process.env.SMTP_USER,
-        replyTo: dto.email,
-        subject: `Новая заявка от ${dto.name ?? dto.email}`,
-        text: adminText,
-      }),
-      // Подтверждение клиенту
-      this.transporter.sendMail({
-        from: `"МойПроект" <${process.env.SMTP_USER}>`,
-        to: dto.email,
-        subject: 'Заявка получена — скоро свяжемся!',
-        html: clientHtml,
-      }),
-    ]);
+    this.transporter.sendMail({
+      from: `"МойПроект" <${process.env.SMTP_USER}>`,
+      to: process.env.SMTP_USER,
+      replyTo: dto.email,
+      subject: `Новая заявка от ${dto.name ?? dto.email}`,
+      text: adminText,
+    }).catch((err) => this.logger.error('Ошибка отправки письма администратору', err));
 
-    if (adminResult.status === 'rejected') {
-      this.logger.error('Ошибка отправки письма администратору', adminResult.reason);
-      throw new InternalServerErrorException('Не удалось отправить письмо');
-    }
-
-    if (clientResult.status === 'rejected') {
-      this.logger.warn('Не удалось отправить подтверждение клиенту', clientResult.reason);
-    }
+    this.transporter.sendMail({
+      from: `"МойПроект" <${process.env.SMTP_USER}>`,
+      to: dto.email,
+      subject: 'Заявка получена — скоро свяжемся!',
+      html: clientHtml,
+    }).catch((err) => this.logger.warn('Не удалось отправить подтверждение клиенту', err));
   }
 }
