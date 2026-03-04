@@ -41,13 +41,27 @@ jobs:
             --region "${AWS_DEFAULT_REGION}" \
             --delete \
             --exclude "*.html" \
-            --cache-control "public, max-age=31536000" # Обычно для ассетов ставят год
+            --exclude "*.json" \
+            --exclude "*.webmanifest" \
+            --exclude "*.xml" \
+            --cache-control "public, max-age=31536000, immutable"
 
-      - name: Upload html (short cache)
+      - name: Upload html (no cache)
         run: |
           aws s3 sync landing/ "s3://${S3_BUCKET}/" \
             --endpoint-url "${S3_ENDPOINT}" \
             --region "${AWS_DEFAULT_REGION}" \
             --exclude "*" \
             --include "*.html" \
-            --cache-control "no-cache, no-store, must-revalidate" # Лучше запретить кеш для HTML вовсе
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      - name: Upload configs (no cache)
+        run: |
+          aws s3 sync landing/ "s3://${S3_BUCKET}/" \
+            --endpoint-url "${S3_ENDPOINT}" \
+            --region "${AWS_DEFAULT_REGION}" \
+            --exclude "*" \
+            --include "*.json" \
+            --include "*.webmanifest" \
+            --include "*.xml" \
+            --cache-control "no-cache, no-store, must-revalidate"
