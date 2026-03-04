@@ -63,6 +63,7 @@ jobs:
             --core-fraction 5 \
             --concurrency 10 \
             --execution-timeout 60s \
+            --service-account-id ${{ secrets.YC_SA_ID }} \
             --folder-id ${{ secrets.YC_FOLDER_ID }}
 
       - name: Cleanup SA key
