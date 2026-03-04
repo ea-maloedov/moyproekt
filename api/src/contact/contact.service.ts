@@ -7,7 +7,7 @@ export class ContactService {
   private readonly logger = new Logger(ContactService.name);
 
   private transporter = nodemailer.createTransport({
-    host: 'smtp.sweb.ru',
+    host: 'smtp.spaceweb.ru',
     port: 465,
     secure: true,
     auth: {
