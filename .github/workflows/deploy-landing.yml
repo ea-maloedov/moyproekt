@@ -1,67 +1,26 @@
-name: Deploy Landing to Yandex Object Storage
+name: Deploy Landing to Yandex Cloud
 
 on:
   push:
-    branches: ["master"]
+    branches:
+      - master  # или master
     paths:
-      - "landing/**"
-      - ".github/workflows/deploy-landing.yml"
-
-concurrency:
-  group: deploy-landing
-  cancel-in-progress: true
+      - 'landing/**' # Скрипт сработает ТОЛЬКО при изменениях в этой папке
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.YC_S3_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_S3_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ru-central1
-      S3_BUCKET: ${{ secrets.YC_S3_BUCKET }}
-      S3_ENDPOINT: https://storage.yandexcloud.net
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Check AWS CLI
-        run: aws --version
-
-      - name: Verify landing folder exists
-        run: test -f landing/index.html
-
-      - name: Upload assets (long cache)
-        run: |
-          aws s3 sync landing/ "s3://${S3_BUCKET}/" \
-            --endpoint-url "${S3_ENDPOINT}" \
-            --region "${AWS_DEFAULT_REGION}" \
-            --delete \
-            --exclude "*.html" \
-            --exclude "*.json" \
-            --exclude "*.webmanifest" \
-            --exclude "*.xml" \
-            --cache-control "public, max-age=31536000, immutable"
-
-      - name: Upload html (no cache)
-        run: |
-          aws s3 sync landing/ "s3://${S3_BUCKET}/" \
-            --endpoint-url "${S3_ENDPOINT}" \
-            --region "${AWS_DEFAULT_REGION}" \
-            --exclude "*" \
-            --include "*.html" \
-            --cache-control "no-cache, no-store, must-revalidate"
-
-      - name: Upload configs (no cache)
-        run: |
-          aws s3 sync landing/ "s3://${S3_BUCKET}/" \
-            --endpoint-url "${S3_ENDPOINT}" \
-            --region "${AWS_DEFAULT_REGION}" \
-            --exclude "*" \
-            --include "*.json" \
-            --include "*.webmanifest" \
-            --include "*.xml" \
-            --cache-control "no-cache, no-store, must-revalidate"
+      - name: Sync files to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --follow-symlinks --delete # Удалит в бакете то, чего уже нет в папке landing
+        env:
+          AWS_S3_BUCKET: ${{ secrets.YC_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.YC_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_S3_SECRET_KEY }}
+          AWS_S3_ENDPOINT: https://storage.yandexcloud.net # Важно: адрес Яндекса
+          SOURCE_DIR: 'landing' # Папка в твоем монорепозитории
