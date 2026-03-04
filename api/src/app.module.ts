@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ContactModule } from './contact/contact.module';
 
-@Module({})
+@Module({
+  imports: [ContactModule],
+})
 export class AppModule {}
