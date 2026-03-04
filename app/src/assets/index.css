@@ -1,0 +1,34 @@
+@import 'tailwindcss';
+
+@theme {
+  /*
+   * Добавляем только новые цвета, которых нет в Tailwind по умолчанию.
+   * НЕ переопределяем black/white — иначе bg-white станет #fafaf8
+   * и карточки сольются с фоном страницы.
+   */
+  --color-accent: #2563ff;
+  --color-soft: #eef2ff;
+  --color-light: #f0efe9;
+  --color-muted: #8a8a82;
+  --color-line: #e4e3dc;
+
+  /* Шрифт по умолчанию — Golos Text */
+  --font-sans: 'Golos Text', sans-serif;
+}
+
+/* Брендовые переменные для использования в CSS — не влияют на утилиты Tailwind */
+:root {
+  --brand-bg: #fafaf8;
+  --brand-dark: #0a0a0a;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #fafaf8;
+  color: #0a0a0a;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}

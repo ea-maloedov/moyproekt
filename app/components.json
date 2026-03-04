@@ -1,0 +1,1 @@
+{"$schema":"https://shadcn-vue.com/schema.json","style":"default","typescript":true,"tsConfigPath":"./tsconfig.app.json","framework":"vite","tailwindCss":"./src/assets/index.css","aliases":{"components":"@/components","utils":"@/lib/utils","ui":"@/components/ui","lib":"@/lib","hooks":"@/composables"}}
