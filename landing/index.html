@@ -1313,6 +1313,210 @@
             font-size: 14px;
         }
 
+        /* ── CONTACTS ── */
+        .contacts-section {
+            background: #0a0a0a;
+            padding: 96px 48px;
+        }
+
+        .contacts-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 64px;
+        }
+
+        .contacts-left {
+            flex: 1;
+        }
+
+        .contacts-label {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 16px;
+        }
+
+        .contacts-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 36px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            margin-bottom: 32px;
+        }
+
+        .contacts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contacts-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .contacts-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .contacts-item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .contacts-item-label {
+            font-size: 11px;
+            color: #555;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .contacts-item-value {
+            font-size: 15px;
+            color: #fff;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contacts-item-value:hover {
+            color: #2563ff;
+        }
+
+        .contacts-right {
+            flex: 0 0 420px;
+        }
+
+        .contacts-form {
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 20px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contacts-form-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .contacts-form-sub {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .contacts-form input,
+        .contacts-form textarea {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-family: 'Golos Text', sans-serif;
+            font-size: 14px;
+            color: #fff;
+            outline: none;
+            transition: border-color 0.2s;
+            resize: none;
+        }
+
+        .contacts-form input::placeholder,
+        .contacts-form textarea::placeholder {
+            color: #444;
+        }
+
+        .contacts-form input:focus,
+        .contacts-form textarea:focus {
+            border-color: #2563ff;
+        }
+
+        .contacts-form .btn-send {
+            background: #2563ff;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 13px 24px;
+            font-family: 'Golos Text', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            width: 100%;
+        }
+
+        .contacts-form .btn-send:hover {
+            opacity: 0.88;
+        }
+
+        .contacts-success {
+            display: none;
+            text-align: center;
+            padding: 24px 0;
+            color: #fff;
+        }
+
+        .contacts-success-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .contacts-success h4 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .contacts-success p {
+            font-size: 13px;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .contacts-section {
+                padding: 64px 24px;
+            }
+
+            .contacts-inner {
+                flex-direction: column;
+                gap: 48px;
+            }
+
+            .contacts-right {
+                flex: unset;
+                width: 100%;
+            }
+
+            .contacts-title {
+                font-size: 26px;
+            }
+        }
+
         /* ── FOOTER ── */
         footer {
             padding: 36px 48px;
@@ -2206,6 +2410,50 @@
     </div>
 </div>
 
+<!-- ── CONTACTS ── -->
+<section class="contacts-section" id="contacts">
+    <div class="contacts-inner">
+        <div class="contacts-left" data-anim="left">
+            <div class="contacts-label">Контакты</div>
+            <h2 class="contacts-title">Есть вопросы?<br>Напишите нам</h2>
+            <div class="contacts-list">
+                <div class="contacts-item">
+                    <div class="contacts-icon">✉️</div>
+                    <div class="contacts-item-text">
+                        <div class="contacts-item-label">Email</div>
+                        <a href="mailto:hello@moyproek.ru" class="contacts-item-value">hello@moyproek.ru</a>
+                    </div>
+                </div>
+                <div class="contacts-item">
+                    <div class="contacts-icon">💬</div>
+                    <div class="contacts-item-text">
+                        <div class="contacts-item-label">Telegram</div>
+                        <a href="https://t.me/moyproekt" class="contacts-item-value" target="_blank">@moyproekt</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contacts-right" data-anim="right">
+            <div class="contacts-form">
+                <div class="contacts-form-title">Напишите нам</div>
+                <div class="contacts-form-sub">Ответим в течение рабочего дня</div>
+                <form id="contactsForm" action="https://formspree.io/f/xvzbeyky" method="POST">
+                    <input type="text" name="name" placeholder="Ваше имя" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <textarea name="message" rows="4" placeholder="Расскажите о вашем агентстве или задайте вопрос"></textarea>
+                    <button type="submit" class="btn-send">Отправить →</button>
+                </form>
+                <div class="contacts-success" id="contactsSuccess">
+                    <div class="contacts-success-icon">✓</div>
+                    <h4>Сообщение отправлено!</h4>
+                    <p>Ответим в течение рабочего дня.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- ── FOOTER ── -->
 <footer>
     <a href="index.html" class="logo">Мой<span class="p">Проект</span></a>
@@ -2227,7 +2475,7 @@
         <h2 class="modal-title">Войдите в список первых</h2>
         <p class="modal-sub">Сервис в разработке. Оставьте контакты — первыми узнаете о запуске и получите специальные
             условия.</p>
-        <form id="contactForm" action="https://formspree.io/f/REPLACE_WITH_YOUR_ID" method="POST">
+        <form id="contactForm" action="https://formspree.io/f/xvzbeyky" method="POST">
             <div class="form-group">
                 <label>Имя <span class="form-opt">(необязательно)</span></label>
                 <input type="text" name="name" placeholder="Иван Петров" autocomplete="name">
@@ -2337,6 +2585,36 @@
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') closeModal();
     });
+
+    async function submitForm(formId, successId, btnSelector) {
+        const form = document.getElementById(formId);
+        if (!form) return;
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const btn = form.querySelector(btnSelector);
+            btn.textContent = 'Отправляем...';
+            btn.disabled = true;
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {'Accept': 'application/json'},
+                });
+                if (res.ok) {
+                    form.style.display = 'none';
+                    document.getElementById(successId).style.display = 'block';
+                } else {
+                    btn.textContent = 'Ошибка — попробуйте ещё раз';
+                    btn.disabled = false;
+                }
+            } catch {
+                form.style.display = 'none';
+                document.getElementById(successId).style.display = 'block';
+            }
+        });
+    }
+
+    submitForm('contactsForm', 'contactsSuccess', '.btn-send');
 
     document.getElementById('contactForm').addEventListener('submit', async e => {
         e.preventDefault();
