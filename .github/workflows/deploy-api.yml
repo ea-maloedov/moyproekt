@@ -1,33 +1,70 @@
-name: Deploy NestJS API
+name: Deploy API
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
     paths:
       - 'api/**'
+      - '.github/workflows/deploy-api.yml'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Build and Deploy to Yandex Cloud
-        uses: yandex-cloud/github-action-serverless-container-deploy@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Логин в Yandex Container Registry через JSON-ключ сервисного аккаунта
+      - name: Login to Yandex Container Registry
+        run: |
+          echo '${{ secrets.YC_SA_JSON_KEY }}' | docker login \
+            --username json_key \
+            --password-stdin \
+            cr.yandex
+
+      # Сборка и пуш образа с кешированием
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
-          # Используем твои секреты со скриншота:
-          service-account-key: ${{ secrets.YC_SA_JSON_KEY }}
-          folder-id: ${{ secrets.YC_FOLDER_ID }}
-          registry-id: ${{ secrets.YC_REGISTRY_ID }}
+          context: api
+          file: api/Dockerfile
+          push: true
+          tags: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-          # Настройки самого контейнера:
-          container-name: 'moyproekt-backend' # ЗАМЕНИ на имя своего контейнера из консоли
-          dockerfile: 'api/Dockerfile'
-          context: 'api'
+      # Установка Yandex Cloud CLI
+      - name: Install yc CLI
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh \
+            | bash -s -- -i /home/runner/yc -n
+          echo "/home/runner/yc/bin" >> $GITHUB_PATH
 
-          # Экономные ресурсы:
-          revision-cores: 1
-          revision-memory: '256MB'
-          revision-core-fraction: 5
-          revision-concurrency: 10
+      # Авторизация yc через JSON-ключ
+      - name: Configure yc CLI
+        run: |
+          echo '${{ secrets.YC_SA_JSON_KEY }}' > /tmp/sa-key.json
+          yc config profile create ci
+          yc config set service-account-key /tmp/sa-key.json
+          yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+
+      # Деплой новой ревизии Serverless Container
+      - name: Deploy revision
+        run: |
+          yc serverless container revision deploy \
+            --container-name moyproekt-backend \
+            --image cr.yandex/${{ secrets.YC_REGISTRY_ID }}/api:${{ github.sha }} \
+            --cores 1 \
+            --memory 256MB \
+            --core-fraction 5 \
+            --concurrency 10 \
+            --execution-timeout 60s \
+            --folder-id ${{ secrets.YC_FOLDER_ID }}
+
+      - name: Cleanup SA key
+        if: always()
+        run: rm -f /tmp/sa-key.json
