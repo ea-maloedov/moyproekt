@@ -14,13 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy to Yandex Object Storage
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --delete
-        env:
-          AWS_S3_BUCKET:        ${{ secrets.YC_BUCKET_NAME }}
-          AWS_ACCESS_KEY_ID:    ${{ secrets.YC_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
-          AWS_S3_ENDPOINT:      https://storage.yandexcloud.net
-          SOURCE_DIR:           landing
+      - name: Configure AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.YC_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.YC_SECRET_ACCESS_KEY }}
+          aws configure set region ru-central1
+
+      - name: Deploy to Object Storage
+        run: |
+          aws s3 sync ./landing s3://${{ secrets.YC_BUCKET_NAME }} \
+            --endpoint-url=https://storage.yandexcloud.net \
+            --delete \
+            --exclude "README.md"
