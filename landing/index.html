@@ -1637,6 +1637,52 @@
                     padding: 10px 40px 10px 16px;
                 }
             }
+        }
+        /* ── CUSTOM SCROLLBAR ───────────────────────────────────── */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(10, 10, 10, 0.35) rgba(228, 227, 220, 0.55);
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(228, 227, 220, 0.55);
+            border-left: 1px solid rgba(228, 227, 220, 0.9);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(
+                    180deg,
+                    rgba(10, 10, 10, 0.18),
+                    rgba(10, 10, 10, 0.35)
+            );
+            border: 3px solid rgba(228, 227, 220, 0.55);
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(
+                    180deg,
+                    rgba(10, 10, 10, 0.28),
+                    rgba(10, 10, 10, 0.48)
+            );
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: rgba(10, 10, 10, 0.55);
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: rgba(228, 227, 220, 0.55);
+        }
+
+        body {
+            overscroll-behavior: none;
+        }
     </style>
 </head>
 <body>
