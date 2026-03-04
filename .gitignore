@@ -51,6 +51,5 @@ Thumbs.db
 !.vscode/tasks.json
 !.vscode/launch.json
 
-package-lock.json
 project-context/
 .claude/
