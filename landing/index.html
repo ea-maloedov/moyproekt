@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>МойПроект — клиентский портал для IT-агентств</title>
+    <title>МойПроект - клиентский портал для IT-агентств</title>
+    <link rel="icon" href="favicon.ico" sizes="32x32">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <meta name="description"
           content="White-label клиентский портал для IT-агентств и веб-студий. Клиенты видят статус, оставляют правки и оплачивают счета — без Telegram и звонков.">
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;600&family=Golos+Text:wght@400;500&display=swap"
@@ -98,7 +101,10 @@
             justify-content: space-between;
             transition: padding 0.3s;
         }
-        nav.scrolled .nav-inner { padding: 12px var(--page-pad); }
+
+        nav.scrolled .nav-inner {
+            padding: 12px var(--page-pad);
+        }
 
         /* ── LOGO ── */
         .logo {
@@ -577,7 +583,11 @@
         }
 
         /* ── LAYOUT ── */
-        .wrap { max-width: 1100px; margin: 0 auto; padding: 0 var(--page-pad); }
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 var(--page-pad);
+        }
 
         section {
             padding: 100px 0;
@@ -1254,7 +1264,9 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            :root { --page-pad: 20px; }
+            :root {
+                --page-pad: 20px;
+            }
 
             .nav-inner {
                 padding: 14px 24px;
@@ -1638,6 +1650,7 @@
                 }
             }
         }
+
         /* ── CUSTOM SCROLLBAR ───────────────────────────────────── */
         html {
             scrollbar-width: thin;
