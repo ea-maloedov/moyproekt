@@ -1,0 +1,31 @@
+name: Deploy NestJS API
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'api/**' # Срабатывает только при изменениях в бэкенде
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Yandex Cloud Serverless Container Deploy
+        uses: yandex-cloud/github-action-serverless-container@main
+        with:
+          service-account-key: ${{ secrets.YC_SA_JSON_KEY }}
+          container-name: 'moyproekt-backend' # Имя, которое ты дал в консоли
+          folder-id: ${{ secrets.YC_FOLDER_ID }}
+          # Собираем образ прямо из папки api
+          dockerfile: 'api/Dockerfile'
+          context: 'api'
+          # Указываем, куда пушить (твой Registry ID)
+          registry-id: ${{ secrets.YC_REGISTRY_ID }}
+          # Настройки ресурсов (минимальные, чтобы не тратить деньги)
+          memory: '256MB'
+          cores: 1
+          core-fraction: 5 # Экономим: используем только 5% мощности ядра
+          concurrency: 10
