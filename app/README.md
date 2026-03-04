@@ -1,5 +1,55 @@
-# Vue 3 + TypeScript + Vite
+# МойПроект — App
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Frontend приложение платформы **МойПроект** — white-label клиентского портала для российских IT-агентств и веб-студий.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+Два типа пользователей в одном SPA:
+- **Агентство** — управляет проектами, клиентами и white-label настройками
+- **Клиент агентства** — видит свой проект, этапы, документы, оплачивает счета
+
+## Стек
+
+- **Vue 3** + TypeScript (strict mode) + `<script setup>`
+- **Vite 7** — сборка
+- **ESLint** + **Prettier** — качество кода
+
+## Запуск
+
+```bash
+npm install
+```
+
+```bash
+# dev-сервер
+npm run dev
+
+# production сборка
+npm run build
+
+# превью production сборки
+npm run preview
+```
+
+## Скрипты
+
+```bash
+npm run lint        # проверка ESLint
+npm run lint:fix    # автофикс
+npm run format      # prettier по src/**
+```
+
+## Экраны агентства
+
+| Экран | Описание |
+|---|---|
+| Проекты | Список клиентов и проектов со статусом |
+| Проект | Этапы (Бриф → Дизайн → Разработка → Тест → Сдача), файлы, комментарии |
+| Клиенты | Имя, email, телефон, активные проекты |
+| Настройки | Логотип, название, цвет кнопок, кастомный домен |
+
+## Экраны клиента
+
+| Экран | Описание |
+|---|---|
+| Мой проект | Этапы со статусами, прогресс-бар |
+| Комментарии | Лента сообщений, прикрепление файлов |
+| Документы и оплата | Скачать акт/счёт, оплатить через ЮKassa |
